@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class FireRaycastProp : MonoBehaviour
 {
     public GameObject firePrefab;
+    public GameObject flammableObjectsParent;
     public Transform fireParent;
     public LayerMask fireLayerMask;
     public Material burntMaterial;
@@ -65,6 +67,49 @@ public class FireRaycastProp : MonoBehaviour
 
     void GenerateGrid()
     {
+        // TODO: Check if object in area collider / trigger
+
+        Transform[] objectsInScene = flammableObjectsParent.GetComponentsInChildren<Transform>();
+
+        foreach (Transform obj in objectsInScene)
+        {
+            if (obj.gameObject != gameObject)
+            {
+                Collider collider = obj.gameObject.GetComponent<Collider>();
+                if (collider != null)
+                {
+                    if (obj.GetComponent<MeshCollider>() != null)
+                    {
+                        if (obj.GetComponent<MeshCollider>().convex)
+                        {
+                            GenerateParticlesOnObject(collider);
+                        }
+                    }
+                    else
+                    {
+                        GenerateParticlesOnObject(collider);
+                    }
+                }
+
+            }
+        }
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, particleDistance * 1.5f);
+        if (colliders.Length != 0)
+        {
+            foreach (Collider collider in colliders)
+            {
+                if (collider.gameObject.GetComponent<FireRaycastSpread>() != null)
+                {
+                    collider.gameObject.GetComponent<FireRaycastSpread>().Ignite(burnTime);
+                    break;
+                }
+            }
+        }
+    }
+
+    /*void GenerateGrid()
+    {
         for (int i = -areaSize / 2; i < areaSize / 2; i++)
         {
             for (int j = -areaSize / 2; j < areaSize / 2; j++)
@@ -89,7 +134,8 @@ public class FireRaycastProp : MonoBehaviour
                 }
             }
         }
-    }
+    }*/
+
     void GenerateParticlesOnObject(GameObject obj)
     {
         Mesh mesh_filter = obj.GetComponent<MeshFilter>().mesh;
