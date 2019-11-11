@@ -791,10 +791,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3372347382080448358, guid: 51fbc97506479d34c9b6d9101e4f331a,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3067892336376022092, guid: 51fbc97506479d34c9b6d9101e4f331a,
         type: 3}
       propertyPath: m_Name
       value: Fire Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3067892336725346463, guid: 51fbc97506479d34c9b6d9101e4f331a,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3067892336376022094, guid: 51fbc97506479d34c9b6d9101e4f331a,
         type: 3}
@@ -850,6 +860,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3067892336412917357, guid: 51fbc97506479d34c9b6d9101e4f331a,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7390239886790648087, guid: 51fbc97506479d34c9b6d9101e4f331a,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 51fbc97506479d34c9b6d9101e4f331a, type: 3}

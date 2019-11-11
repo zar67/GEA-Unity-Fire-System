@@ -7,6 +7,7 @@ public class FireRaycastProp : MonoBehaviour
 {
     public GameObject firePrefab;
     public GameObject flammableObjectsParent;
+    public GameObject fireArea;
     public Transform fireParent;
     public Material burntMaterial;
 
@@ -61,7 +62,6 @@ public class FireRaycastProp : MonoBehaviour
     void GenerateGrid()
     {
         // TODO: Check if object in area collider / trigger
-
         Transform[] flammableObjects = flammableObjectsParent.GetComponentsInChildren<Transform>();
 
         foreach (Transform obj in flammableObjects)
@@ -123,7 +123,18 @@ public class FireRaycastProp : MonoBehaviour
 
                     if (CheckPointInCollider(obj, pos))
                     {
-                        GenerateParticle(pos_x, pos_y, pos_z, obj.gameObject.GetComponent<FlammableObject>().material);
+                        Collider[] fire_area = fireArea.GetComponents<Collider>();
+
+                        foreach(Collider collider in fire_area)
+                        {
+                            if (CheckPointInCollider(collider, pos))
+                            {
+                                GenerateParticle(pos_x, pos_y, pos_z, obj.gameObject.GetComponent<FlammableObject>().material);
+                                break;
+                            }
+                        }
+
+                        
                     }
 
                     pos_z += particleDistance;
