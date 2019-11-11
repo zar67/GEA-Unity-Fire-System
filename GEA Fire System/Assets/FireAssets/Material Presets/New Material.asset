@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1074dd955fe5d4c8b5dc6b0eb4df45, type: 3}
   m_Name: New Material
   m_EditorClassIdentifier: 
-  spreadChance: 0
-  burnTime: 0
-  particleDistance: 0
+  spreadChance: 1
+  burnTime: 52.09
+  particleDistance: 1.7
