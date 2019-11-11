@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class FireRaycastSpread : MonoBehaviour
 {
+    public FireMaterial material;
+    
     public bool ignited = false;
     public bool burntOut = false;
 
     public float burnOutTime = 0;
 
-    public void Ignite(float burnTime)
+    public void Ignite()
     {
         GetComponent<ParticleSystem>().Play();
         // Leave Burn Decal
 
-        burnOutTime = Time.time + burnTime;
+        burnOutTime = Time.time + material.burnTime;
         ignited = true;
     }
 

@@ -10,11 +10,6 @@ public class FireRaycastProp : MonoBehaviour
     public Transform fireParent;
     public Material burntMaterial;
 
-    public float spreadChance;
-    public float burnTime;
-
-    public float particleDistance;
-
     List<GameObject> particles = new List<GameObject>();
     List<GameObject> colliding_objects = new List<GameObject>();
 
@@ -31,7 +26,7 @@ public class FireRaycastProp : MonoBehaviour
 
             if (!fire_spread.burntOut)
             {
-                Collider[] colliders = Physics.OverlapSphere(particle.transform.position, particleDistance * 2);
+                Collider[] colliders = Physics.OverlapSphere(particle.transform.position, fire_spread.material.particleDistance * 2);
                 if (colliders.Length != 0)
                 {
                     int ignited_neighbours = 0;
@@ -47,11 +42,11 @@ public class FireRaycastProp : MonoBehaviour
                         }
                     }
 
-                    float random_percent = Random.Range(0.0f, colliders.Length) / (spreadChance / 100);
+                    float random_percent = Random.Range(0.0f, colliders.Length) / (fire_spread.material.spreadChance / 100);
 
                     if (random_percent < ignited_neighbours && !fire_spread.ignited)
                     {
-                        fire_spread.Ignite(burnTime);
+                        fire_spread.Ignite();
                     }
                 }
 
@@ -67,46 +62,52 @@ public class FireRaycastProp : MonoBehaviour
     {
         // TODO: Check if object in area collider / trigger
 
-        Transform[] objectsInScene = flammableObjectsParent.GetComponentsInChildren<Transform>();
+        Transform[] flammableObjects = flammableObjectsParent.GetComponentsInChildren<Transform>();
 
-        foreach (Transform obj in objectsInScene)
+        foreach (Transform obj in flammableObjects)
         {
-            if (obj.gameObject != gameObject)
+            if (obj.GetComponent<FlammableObject>() != null)
             {
-                Collider collider = obj.gameObject.GetComponent<Collider>();
-                if (collider != null)
+                FireMaterial material = obj.GetComponent<FlammableObject>().material;
+                if (obj.gameObject != gameObject)
                 {
-                    if (obj.GetComponent<MeshCollider>() != null)
+                    Collider collider = obj.gameObject.GetComponent<Collider>();
+                    if (collider != null)
                     {
-                        if (obj.GetComponent<MeshCollider>().convex)
+                        if (obj.GetComponent<MeshCollider>() != null)
                         {
-                            GenerateParticlesOnObject(collider);
+                            if (obj.GetComponent<MeshCollider>().convex)
+                            {
+                                GenerateParticlesOnObject(collider, material.particleDistance);
+                            }
+                        }
+                        else
+                        {
+                            GenerateParticlesOnObject(collider, material.particleDistance);
                         }
                     }
-                    else
-                    {
-                        GenerateParticlesOnObject(collider);
-                    }
-                }
 
+                }
             }
         }
 
-        Collider[] colliders = Physics.OverlapSphere(transform.position, particleDistance * 1.5f);
-        if (colliders.Length != 0)
+        GameObject closestParticle = particles[0];
+
+        foreach (GameObject obj in particles)
         {
-            foreach (Collider collider in colliders)
+            if (Vector3.Distance(transform.position, closestParticle.transform.position) > Vector3.Distance(transform.position, obj.transform.position))
             {
-                if (collider.gameObject.GetComponent<FireRaycastSpread>() != null)
-                {
-                    collider.gameObject.GetComponent<FireRaycastSpread>().Ignite(burnTime);
-                    break;
-                }
+                closestParticle = obj;
             }
+        }
+
+        if (closestParticle.GetComponent<FireRaycastSpread>() != null)
+        {
+            closestParticle.GetComponent<FireRaycastSpread>().Ignite();
         }
     }
 
-    void GenerateParticlesOnObject(Collider obj)
+    void GenerateParticlesOnObject(Collider obj, float particleDistance)
     {
         float pos_x = obj.bounds.min.x;
         float pos_y = obj.bounds.min.y;
@@ -122,13 +123,11 @@ public class FireRaycastProp : MonoBehaviour
 
                     if (CheckPointInCollider(obj, pos))
                     {
-                        GenerateParticle(pos_x, pos_y, pos_z);
+                        GenerateParticle(pos_x, pos_y, pos_z, obj.gameObject.GetComponent<FlammableObject>().material);
                     }
 
-                    
                     pos_z += particleDistance;
                 }
-
                 pos_y += particleDistance;
                 pos_z = obj.bounds.min.z;
             }
@@ -145,10 +144,11 @@ public class FireRaycastProp : MonoBehaviour
         return closest == point;
     }
 
-    GameObject GenerateParticle(float x, float y, float z)
+    GameObject GenerateParticle(float x, float y, float z, FireMaterial material)
     {
         GameObject temp_obj = Instantiate(firePrefab, fireParent);
         temp_obj.transform.position = new Vector3(x, y, z);
+        temp_obj.GetComponent<FireRaycastSpread>().material = material;
 
         particles.Add(temp_obj);
 
