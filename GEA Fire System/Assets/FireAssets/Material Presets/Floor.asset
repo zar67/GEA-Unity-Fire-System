@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa1074dd955fe5d4c8b5dc6b0eb4df45, type: 3}
-  m_Name: Temp
+  m_Name: Floor
   m_EditorClassIdentifier: 
-  spreadChance: 0.753
-  burnTime: 6
-  particleDistance: 0.5
+  spreadChance: 0.75
+  burnTime: 4
+  particleDistance: 0.7
